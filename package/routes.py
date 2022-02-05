@@ -1,4 +1,3 @@
-from crypt import methods
 import os 
 import secrets
 from turtle import title
@@ -10,31 +9,21 @@ from package.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostFo
 from package.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
-posts = [
-    {
-        'Author': 'Ousmane Diallo',
-        'title':'FLASK_MD 1',
-        'content':'First post content',
-        'date_posted':'Janiary 02, 2021'
-    },
-    {
-        'Author': 'Bou Koulibaly',
-        'title':'Flask Test 2',
-        'content':'SSecond post content',
-        'date_posted':'Janiary 03, 2021'
-    }
-]
+
 
 @app.route("/")
-
+@app.route("/home")
+def home():
+    posts = Post.query.all()
+    return render_template('home.html', posts=posts)
 
 @app.route("/about")
 def about():
     return render_template('about.html', title='About')
 
-@app.route("/home")
-def home():
-    return render_template('home.html', posts=posts)
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 @app.route("/register", methods=['GET','POST'])
 def register():
@@ -108,6 +97,9 @@ def account():
 def new_post():
     form = PostForm()
     if form.validate_on_submit():
+        post = Post(title = form.title.data, content = form.content.data, author = current_user)
+        db.session.add(post)
+        db.session.Commit()
         flash('Your post has been created!', 'success')
         return redirect(url_for('home'))
     return render_template('create_post.html', title= 'New Post', form = form)
