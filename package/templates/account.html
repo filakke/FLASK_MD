@@ -42,11 +42,11 @@
                   <div class="form-group">
                       {{ form.picture.label() }}
                       {{ form.picture(class="form-control-file") }}
-                      {{ % if form.picture.errors % }}
+                      {% if form.picture.errors %}
                             {% for error in form.picture.errors %}
                                 <span class"text-denger">{{ error }}</span></br>
                             {% endfor %}
-                      {{ % endif % }}
+                      {% endif %}
                 </div>
               </fieldset>
               <div class="form-group">
